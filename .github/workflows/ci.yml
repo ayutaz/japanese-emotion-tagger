@@ -18,8 +18,10 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: uv pip install -r requirements.txt
+        run: |
+          uv venv
+          uv pip install -r requirements.txt
 
       - name: Run mock test
         run: |
-          python main_mock.py ./dummy_data/metadata.csv ./dummy_data/wavs ./dummy_data/output.csv
+          .venv/bin/python main_mock.py ./dummy_data/metadata.csv ./dummy_data/wavs ./dummy_data/output.csv
