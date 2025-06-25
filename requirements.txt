@@ -1,0 +1,6 @@
+transformers
+torch
+numba
+librosa
+google-cloud-language
+pandas
