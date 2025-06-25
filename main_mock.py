@@ -16,48 +16,32 @@ class JapaneseEmotionTagger:
     """
 
     def __init__(self):
-        """モデルとクライアントを初期化"""
-        print("モデルを初期化しています...")
-        # 1. 音声感情認識モデルのロード
-        device = "cuda:0" if torch.cuda.is_available() else "cpu"
-        print(f"使用デバイス: {device}")
-        self.audio_pipeline = pipeline(
-            "audio-classification",
-            model="microsoft/wavlm-base-plus-jp-sentiment",
-            device=device
-        )
-
-        # 2. Google Cloud Languageクライアントの初期化
-        self.gcp_language_client = language_v1.LanguageServiceClient()
+        """モデルとクライアントを初期化 (モック)"""
+        print("モデルの初期化をスキップします (モックモード)")
+        # 実際のモデルロードとクライアント初期化は行わない
+        self.audio_pipeline = None
+        self.gcp_language_client = None
         print("初期化が完了しました。")
 
     def analyze_audio(self, audio_path: str) -> str:
         """
-        音声ファイルから感情を分析する。
+        音声ファイルから感情を分析する (モック)。
         """
-        try:
-            speech, sr = librosa.load(audio_path, sr=16000)
-            results = self.audio_pipeline(speech, top_k=1)
-            return results[0]['label'].lower()
-        except Exception as e:
-            print(f"音声分析中にエラーが発生しました ({audio_path}): {e}")
-            return "error"
+        print(f"音声分析をスキップ: {os.path.basename(audio_path)}")
+        if "001" in audio_path:
+            return "happy"
+        else:
+            return "normal"
 
     def analyze_text(self, text: str) -> dict:
         """
-        テキストから感情を分析する。
+        テキストから感情を分析する (モック)。
         """
-        try:
-            document = language_v1.Document(
-                content=text, type_=language_v1.Document.Type.PLAIN_TEXT
-            )
-            sentiment = self.gcp_language_client.analyze_sentiment(
-                document=document
-            ).document_sentiment
-            return {"score": sentiment.score, "magnitude": sentiment.magnitude}
-        except Exception as e:
-            print(f"テキスト分析中にエラーが発生しました: {e}")
-            return {"score": 0.0, "magnitude": 0.0}
+        print(f"テキスト分析をスキップ: '{text}'")
+        if "テスト用" in text:
+            return {"score": 0.8, "magnitude": 1.2}
+        else:
+            return {"score": -0.5, "magnitude": 0.8}
 
     def _integrate_results(self, audio_emotion: str, text_sentiment: dict) -> str:
         """
